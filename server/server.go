@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	pb "github.com/earayu/photo_manager/proto/generate"
+	flag "github.com/spf13/pflag"
 	grpc "google.golang.org/grpc"
 	"log"
 	"net"
