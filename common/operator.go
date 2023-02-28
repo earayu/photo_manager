@@ -9,7 +9,7 @@ import (
 type Operator interface {
 	Open(inputPath string) (image.Image, error)
 	NextImage(currentImage image.Image) (image.Image, error)
-	Close(outputPath string) error
+	Close(currentImage image.Image, outputPath string) error
 }
 
 type DefaultOperator struct {
