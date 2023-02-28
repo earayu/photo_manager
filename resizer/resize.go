@@ -1,46 +1,37 @@
 package resizer
 
 import (
-	"image"
-	"image/jpeg"
-	"os"
-
+	"github.com/earayu/photo_manager/common"
 	"github.com/nfnt/resize"
+	"image"
 )
 
-func ThumbnailImage(inputPath, outputPath string, maxWidth, maxHeight uint) (error, int, int) {
-	// Open input file
-	inputFile, err := os.Open(inputPath)
-	if err != nil {
-		return err, 0, 0
-	}
-	defer inputFile.Close()
+type ThumbnailResizer struct {
+	common.DefaultOperator
 
-	// Decode input image
-	inputImage, _, err := image.Decode(inputFile)
-	if err != nil {
-		return err, 0, 0
-	}
+	MaxWidth  uint
+	MaxHeight uint
+}
 
-	// Determine output size while maintaining aspect ratio
-	//inputWidth := inputImage.Bounds().Dx()
-	//inputHeight := inputImage.Bounds().Dy()
-
+func (t *ThumbnailResizer) NextImage(currentImage image.Image) (image.Image, error) {
 	// Resize input image to output image
-	outputImage := resize.Thumbnail(maxWidth, maxHeight, inputImage, resize.Lanczos3)
+	outputImage := resize.Thumbnail(t.MaxWidth, t.MaxHeight, currentImage, resize.Lanczos3)
+	return outputImage, nil
+}
 
-	// Create output file
-	outputFile, err := os.Create(outputPath)
+func ThumbnailImage(inputPath, outputPath string, maxWidth, maxHeight uint) (error, int, int) {
+	t := ThumbnailResizer{
+		MaxWidth:  uint(maxWidth),
+		MaxHeight: uint(maxHeight),
+	}
+	image, err := t.Open(inputPath)
 	if err != nil {
 		return err, 0, 0
 	}
-	defer outputFile.Close()
-
-	// Encode output image
-	err = jpeg.Encode(outputFile, outputImage, &jpeg.Options{Quality: 80})
+	outputImage, err := t.NextImage(image)
 	if err != nil {
 		return err, 0, 0
 	}
-
+	t.Close(outputImage, outputPath)
 	return nil, outputImage.Bounds().Dx(), outputImage.Bounds().Dy()
 }

@@ -1,29 +1,23 @@
 package cutter
 
 import (
+	"github.com/earayu/photo_manager/common"
 	"image"
-	"image/jpeg"
-	"os"
 )
 
-func CutImageByRatio(inputPath, outputPath string, widthWeight int, heightWeight int) (error, int, int) {
-	targetRatio := float64(widthWeight) / float64(heightWeight)
-	// Open input file
-	inputFile, err := os.Open(inputPath)
-	if err != nil {
-		return err, 0, 0
-	}
-	defer inputFile.Close()
+type CutterByRatio struct {
+	common.DefaultOperator
 
-	// Decode input image
-	inputImage, _, err := image.Decode(inputFile)
-	if err != nil {
-		return err, 0, 0
-	}
+	WidthWeight  int
+	HeightWeight int
+}
+
+func (c *CutterByRatio) NextImage(currentImage image.Image) (image.Image, error) {
+	targetRatio := float64(c.WidthWeight) / float64(c.HeightWeight)
 
 	// Get input image dimensions
-	inputWidth := inputImage.Bounds().Dx()
-	inputHeight := inputImage.Bounds().Dy()
+	inputWidth := currentImage.Bounds().Dx()
+	inputHeight := currentImage.Bounds().Dy()
 
 	// Calculate output image dimensions
 	inputRatio := float64(inputWidth) / float64(inputHeight)
@@ -40,48 +34,44 @@ func CutImageByRatio(inputPath, outputPath string, widthWeight int, heightWeight
 	startY := (inputHeight - outputHeight) / 2
 
 	// Create the cropped image
-	croppedImage := inputImage.(interface {
+	croppedImage := currentImage.(interface {
 		SubImage(r image.Rectangle) image.Image
 	}).SubImage(image.Rect(startX, startY, startX+outputWidth, startY+outputHeight))
+	return croppedImage, nil
+}
 
-	// Create output file
-	outputFile, err := os.Create(outputPath)
+func CutImageByRatio(inputPath, outputPath string, widthWeight int, heightWeight int) (error, int, int) {
+	c := CutterByRatio{
+		WidthWeight:  widthWeight,
+		HeightWeight: heightWeight,
+	}
+	image, err := c.Open(inputPath)
 	if err != nil {
 		return err, 0, 0
 	}
-	defer outputFile.Close()
-
-	// Encode output image
-	err = jpeg.Encode(outputFile, croppedImage, &jpeg.Options{Quality: 80})
+	croppedImage, err := c.NextImage(image)
 	if err != nil {
 		return err, 0, 0
 	}
-
+	c.Close(croppedImage, outputPath)
 	return nil, croppedImage.Bounds().Dx(), croppedImage.Bounds().Dy()
 }
 
-// cutImage cuts an image to the specified dimensions
-func cutImage(inputPath, outputPath string, targetWidth, targetHeight int) (error, int, int) {
-	// Open input file
-	inputFile, err := os.Open(inputPath)
-	if err != nil {
-		return err, 0, 0
-	}
-	defer inputFile.Close()
+type CutterBySize struct {
+	common.DefaultOperator
 
-	// Decode input image
-	inputImage, _, err := image.Decode(inputFile)
-	if err != nil {
-		return err, 0, 0
-	}
+	targetWidth  int
+	targetHeight int
+}
 
+func (c *CutterBySize) NextImage(currentImage image.Image) (image.Image, error) {
 	// Get input image dimensions
-	inputWidth := inputImage.Bounds().Dx()
-	inputHeight := inputImage.Bounds().Dy()
+	inputWidth := currentImage.Bounds().Dx()
+	inputHeight := currentImage.Bounds().Dy()
 
 	// Calculate output image dimensions
-	outputWidth := targetWidth
-	outputHeight := targetHeight
+	outputWidth := c.targetWidth
+	outputHeight := c.targetHeight
 	if outputWidth > inputWidth {
 		outputWidth = inputWidth
 	}
@@ -94,22 +84,26 @@ func cutImage(inputPath, outputPath string, targetWidth, targetHeight int) (erro
 	startY := (inputHeight - outputHeight) / 2
 
 	// Create the cropped image
-	croppedImage := inputImage.(interface {
+	croppedImage := currentImage.(interface {
 		SubImage(r image.Rectangle) image.Image
 	}).SubImage(image.Rect(startX, startY, startX+outputWidth, startY+outputHeight))
+	return croppedImage, nil
+}
 
-	// Create output file
-	outputFile, err := os.Create(outputPath)
+// cutImage cuts an image to the specified dimensions
+func cutImage(inputPath, outputPath string, targetWidth, targetHeight int) (error, int, int) {
+	c := CutterBySize{
+		targetWidth:  targetWidth,
+		targetHeight: targetHeight,
+	}
+	image, err := c.Open(inputPath)
 	if err != nil {
 		return err, 0, 0
 	}
-	defer outputFile.Close()
-
-	// Encode output image
-	err = jpeg.Encode(outputFile, croppedImage, &jpeg.Options{Quality: 80})
+	croppedImage, err := c.NextImage(image)
 	if err != nil {
 		return err, 0, 0
 	}
-
+	c.Close(croppedImage, outputPath)
 	return nil, croppedImage.Bounds().Dx(), croppedImage.Bounds().Dy()
 }
