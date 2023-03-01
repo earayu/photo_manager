@@ -55,5 +55,8 @@ func (f *FileSystemSource) Next() (string, bool) {
 	}
 	fileName := f.Files[f.index.Load()].Name()
 	f.index.Add(1)
+	if f.SourceFilter != nil && !f.SourceFilter(fileName) {
+		return f.Next()
+	}
 	return fileName, f.index.Load() < int32(len(f.Files))
 }

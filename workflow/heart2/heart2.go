@@ -8,6 +8,7 @@ import (
 	"image"
 	"image/jpeg"
 	"os"
+	"strings"
 )
 
 type Heart2 struct {
@@ -50,7 +51,7 @@ func main() {
 		InputDir:  baseDir + "/src",
 		OutputDir: baseDir + "/dest",
 		SourceFilter: func(fileName string) bool {
-			return true
+			return strings.HasSuffix(fileName, ".jpg") || strings.HasSuffix(fileName, ".jpeg")
 		},
 	}
 	s.Open()
