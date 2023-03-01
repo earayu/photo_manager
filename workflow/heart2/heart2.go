@@ -16,6 +16,7 @@ func main() {
 	var baseDir string
 	flag.StringVar(&baseDir, "base_dir", "~/Documents/GitHub/photo_manager", "The base directory of the project")
 	flag.Parse()
+	//1. define operators
 	ops := []common.Operator{
 		&common.Filter{
 			Lambda: func(img *image.Image) bool {
@@ -31,12 +32,23 @@ func main() {
 			MaxHeight: 300,
 		},
 	}
-	h := Heart2{
-		common.OperatorChain{
-			InputPath:  baseDir + "/testdata/resizer/resizer.jpeg",
-			OutputPath: baseDir + "/testdata/resizer/resizer_output.jpeg",
-			Ops:        ops,
-		},
+
+	//2. read input directory
+	s := common.FileSystemSource{
+		InputDir:  baseDir + "/src",
+		OutputDir: baseDir + "/dest",
 	}
-	h.Process()
+	s.Open()
+
+	for fileName, hasNext := s.Next(); hasNext; fileName, hasNext = s.Next() {
+		//3. process each image
+		h := Heart2{
+			common.OperatorChain{
+				InputPath:  baseDir + "/src/" + fileName,
+				OutputPath: baseDir + "/dest/" + fileName,
+				Ops:        ops,
+			},
+		}
+		h.Process()
+	}
 }

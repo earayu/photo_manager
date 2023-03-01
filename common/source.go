@@ -11,16 +11,16 @@ type Source interface {
 }
 
 type FileSystemSource struct {
-	inputDir  string
-	outputDir string
+	InputDir  string
+	OutputDir string
 
-	files []os.DirEntry
+	Files []os.DirEntry
 	index atomic.Int32
 }
 
 func (f *FileSystemSource) Open() error {
 	// Check input directory
-	inputDirInfo, err := os.Stat(f.inputDir)
+	inputDirInfo, err := os.Stat(f.InputDir)
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func (f *FileSystemSource) Open() error {
 	}
 
 	// Check output directory
-	outputDirInfo, err := os.Stat(f.outputDir)
+	outputDirInfo, err := os.Stat(f.OutputDir)
 	if err != nil {
 		return err
 	}
@@ -38,19 +38,19 @@ func (f *FileSystemSource) Open() error {
 	}
 
 	//read input directory
-	files, err := os.ReadDir(f.inputDir)
+	files, err := os.ReadDir(f.InputDir)
 	if err != nil {
 		return err
 	}
-	f.files = files
+	f.Files = files
 	return nil
 }
 
 func (f *FileSystemSource) Next() (string, bool) {
-	if f.index.Load() >= int32(len(f.files)) {
+	if f.index.Load() >= int32(len(f.Files)) {
 		return "", false
 	}
-	fileName := f.files[f.index.Load()].Name()
+	fileName := f.Files[f.index.Load()].Name()
 	f.index.Add(1)
-	return fileName, f.index.Load() < int32(len(f.files))
+	return fileName, f.index.Load() < int32(len(f.Files))
 }
