@@ -6,6 +6,8 @@ import (
 	"github.com/earayu/photo_manager/resizer"
 	flag "github.com/spf13/pflag"
 	"image"
+	"image/jpeg"
+	"os"
 )
 
 type Heart2 struct {
@@ -16,6 +18,11 @@ func main() {
 	var baseDir string
 	flag.StringVar(&baseDir, "base_dir", "~/Documents/GitHub/photo_manager", "The base directory of the project")
 	flag.Parse()
+	//0. define HeartMixer
+	hm := common.HeartMixer{
+		ImagePool: make([]*image.Image, 0),
+	}
+
 	//1. define operators
 	ops := []common.Operator{
 		&common.Filter{
@@ -30,6 +37,11 @@ func main() {
 		&resizer.ThumbnailResizer{
 			MaxWidth:  300,
 			MaxHeight: 300,
+		},
+		&common.Acceptor{
+			Accept: func(img *image.Image) {
+				hm.ImagePool = append(hm.ImagePool, img)
+			},
 		},
 	}
 
@@ -54,4 +66,42 @@ func main() {
 		}
 		h.Process()
 	}
+
+	//4. mix images
+	i, err := hm.Mix()
+	if err != nil {
+		panic(err)
+	}
+	Close(rgbaToImage(i), baseDir+"/dest/heart2.jpg")
+}
+
+func Close(currentImage image.Image, outputPath string) error {
+	// Create output file
+	outputFile, err := os.Create(outputPath)
+	if err != nil {
+		return err
+	}
+	defer outputFile.Close()
+
+	// Encode output image
+	err = jpeg.Encode(outputFile, currentImage, &jpeg.Options{Quality: 80})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func rgbaToImage(rgba *image.RGBA) image.Image {
+	// Create a new *image.RGBA that is backed by the same pixel data as the original *image.RGBA,
+	// but with a different color model.
+	bounds := rgba.Bounds()
+	newRgba := image.NewRGBA(bounds)
+	for x := bounds.Min.X; x < bounds.Max.X; x++ {
+		for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+			newRgba.Set(x, y, rgba.At(x, y))
+		}
+	}
+
+	// Return the new *image.RGBA as an *image.Image by using a type assertion.
+	return image.Image(newRgba)
 }
