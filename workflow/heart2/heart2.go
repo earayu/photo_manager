@@ -19,7 +19,7 @@ func main() {
 	//1. define operators
 	ops := []common.Operator{
 		&common.Filter{
-			Lambda: func(img *image.Image) bool {
+			Filter: func(img *image.Image) bool {
 				return true
 			},
 		},
@@ -37,6 +37,9 @@ func main() {
 	s := common.FileSystemSource{
 		InputDir:  baseDir + "/src",
 		OutputDir: baseDir + "/dest",
+		SourceFilter: func(fileName string) bool {
+			return true
+		},
 	}
 	s.Open()
 

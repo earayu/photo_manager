@@ -16,6 +16,9 @@ type FileSystemSource struct {
 
 	Files []os.DirEntry
 	index atomic.Int32
+
+	//filter out some files based on file name, e.g. filter out all files that end with ".mov" or ".mp4"
+	SourceFilter func(fileName string) bool
 }
 
 func (f *FileSystemSource) Open() error {
