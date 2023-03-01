@@ -15,10 +15,16 @@ func (o *OperatorChain) Process() {
 		panic(err)
 	}
 	for _, operator := range o.Ops {
+		if image == nil {
+			break
+		}
 		image, err = operator.NextImage(image)
 		if err != nil {
 			panic(err)
 		}
+	}
+	if image == nil {
+		return
 	}
 	err = o.Close(image, o.OutputPath)
 	if err != nil {

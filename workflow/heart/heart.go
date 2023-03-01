@@ -15,7 +15,7 @@ type Heart struct {
 	height int
 }
 
-func (d *Heart) NextImage(currentImage image.Image) (image.Image, error) {
+func (d *Heart) NextImage(currentImage *image.Image) (*image.Image, error) {
 	c := cutter.CutterByRatio{
 		WidthWeight:  1,
 		HeightWeight: 1,

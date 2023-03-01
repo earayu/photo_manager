@@ -13,10 +13,10 @@ type ThumbnailResizer struct {
 	MaxHeight uint
 }
 
-func (t *ThumbnailResizer) NextImage(currentImage image.Image) (image.Image, error) {
+func (t *ThumbnailResizer) NextImage(currentImage *image.Image) (*image.Image, error) {
 	// Resize input image to output image
-	outputImage := resize.Thumbnail(t.MaxWidth, t.MaxHeight, currentImage, resize.Lanczos3)
-	return outputImage, nil
+	outputImage := resize.Thumbnail(t.MaxWidth, t.MaxHeight, (*currentImage), resize.Lanczos3)
+	return &outputImage, nil
 }
 
 func ThumbnailImage(inputPath, outputPath string, maxWidth, maxHeight uint) (error, int, int) {
@@ -33,5 +33,5 @@ func ThumbnailImage(inputPath, outputPath string, maxWidth, maxHeight uint) (err
 		return err, 0, 0
 	}
 	t.Close(outputImage, outputPath)
-	return nil, outputImage.Bounds().Dx(), outputImage.Bounds().Dy()
+	return nil, (*outputImage).Bounds().Dx(), (*outputImage).Bounds().Dy()
 }

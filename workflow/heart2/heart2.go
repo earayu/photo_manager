@@ -5,6 +5,7 @@ import (
 	"github.com/earayu/photo_manager/cutter"
 	"github.com/earayu/photo_manager/resizer"
 	flag "github.com/spf13/pflag"
+	"image"
 )
 
 type Heart2 struct {
@@ -16,6 +17,11 @@ func main() {
 	flag.StringVar(&baseDir, "base_dir", "~/Documents/GitHub/photo_manager", "The base directory of the project")
 	flag.Parse()
 	ops := []common.Operator{
+		&common.Filter{
+			Lambda: func(img *image.Image) bool {
+				return true
+			},
+		},
 		&cutter.CutterByRatio{
 			WidthWeight:  1,
 			HeightWeight: 1,
