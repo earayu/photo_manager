@@ -7,6 +7,9 @@ type OperatorChain struct {
 	OutputPath string
 
 	Ops []Operator
+
+	//todo feature: add flag to control whether to save image to disk after each operator
+	//each operator should also have a flag to control whether to save image to disk
 }
 
 func (o *OperatorChain) Process() {

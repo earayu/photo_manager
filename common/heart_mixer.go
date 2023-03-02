@@ -6,36 +6,26 @@ import (
 	"image/color"
 )
 
-//type HeartMixer struct {
-//	common.DefaultMixer
-//}
-//
-//// combine all images in ImagePool to one image, make it a heart shape
-//func (m *HeartMixer) Mix() (*image.Image, error) {
-//	panic("implement me")
-//}
-
-type HeartMixer struct {
+type CombinationMixer struct {
 	DefaultOperator
-	ImagePool []*image.Image
 }
 
-func (m *HeartMixer) Mix() (*image.RGBA, error) {
-	// Check if ImagePool is not empty
-	if len(m.ImagePool) == 0 {
-		return nil, errors.New("ImagePool is empty")
+func (m *CombinationMixer) Mix(imagePool []*image.Image) (*image.Image, error) {
+	// Check if imagePool is not empty
+	if len(imagePool) == 0 {
+		return nil, errors.New("imagePool is empty")
 	}
 
-	// Create a new RGBA image with dimensions equal to the first image in ImagePool
-	width := (*m.ImagePool[0]).Bounds().Max.X
-	height := (*m.ImagePool[0]).Bounds().Max.Y
+	// Create a new RGBA image with dimensions equal to the first image in imagePool
+	width := (*imagePool[0]).Bounds().Max.X
+	height := (*imagePool[0]).Bounds().Max.Y
 	rgba := image.NewRGBA(image.Rect(0, 0, width, height))
 
 	// Loop through each pixel in the new image and calculate the average color
 	for x := 0; x < width; x++ {
 		for y := 0; y < height; y++ {
 			var r, g, b, a uint32
-			for _, img := range m.ImagePool {
+			for _, img := range imagePool {
 				// Retrieve the color of the corresponding pixel in the current image
 				c := (*img).At(x, y)
 				cr, cg, cb, ca := c.RGBA()
@@ -48,7 +38,7 @@ func (m *HeartMixer) Mix() (*image.RGBA, error) {
 			}
 
 			// Divide the accumulated colors by the number of images to get the average color
-			numImages := uint32(len(m.ImagePool))
+			numImages := uint32(len(imagePool))
 			r /= numImages
 			g /= numImages
 			b /= numImages
@@ -60,5 +50,5 @@ func (m *HeartMixer) Mix() (*image.RGBA, error) {
 	}
 
 	// Return the new image and nil error to indicate a successful mix
-	return rgba, nil
+	return rgbaToImage(rgba), nil
 }

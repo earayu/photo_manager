@@ -1,6 +1,7 @@
 package common
 
 import (
+	"image"
 	"os"
 	"sync/atomic"
 )
@@ -19,6 +20,9 @@ type FileSystemSource struct {
 
 	//filter out some files based on file name, e.g. filter out all files that end with ".mov" or ".mp4"
 	SourceFilter func(fileName string) bool
+
+	//processed images
+	ProcessedImages []*image.Image
 }
 
 func (f *FileSystemSource) Open() error {
