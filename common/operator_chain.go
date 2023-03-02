@@ -5,8 +5,8 @@ type OperatorChain struct {
 
 	Ops []Operator
 
-	//todo feature: add flag to control whether to save image to disk after each operator
-	//each operator should also have a flag to control whether to save image to disk
+	//SkipClose default true
+	AutoSave bool
 }
 
 func (o *OperatorChain) Process(inputPath, outputPath string) {
@@ -24,6 +24,9 @@ func (o *OperatorChain) Process(inputPath, outputPath string) {
 		}
 	}
 	if image == nil {
+		return
+	}
+	if !o.AutoSave {
 		return
 	}
 	err = o.Close(image, outputPath)
