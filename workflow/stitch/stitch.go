@@ -56,7 +56,10 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 		},
 	}
 
-	mixer := &mixer.StitchMixer{}
+	mixer := &mixer.StitchMixer{
+		PhotoCountInRow:    10,
+		PhotoCountInColumn: 30,
+	}
 
 	return &StitchWorkflow{
 		workflow.Workflow{
