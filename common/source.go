@@ -9,6 +9,7 @@ import (
 type Source interface {
 	Open() error
 	Next() (string, bool)
+	GetProcessedImages() []*image.Image
 }
 
 type FileSystemSource struct {
@@ -63,4 +64,8 @@ func (f *FileSystemSource) Next() (string, bool) {
 		return f.Next()
 	}
 	return fileName, f.index.Load() < int32(len(f.Files))
+}
+
+func (f *FileSystemSource) GetProcessedImages() []*image.Image {
+	return f.ProcessedImages
 }

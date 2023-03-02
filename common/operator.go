@@ -6,6 +6,14 @@ import (
 	"os"
 )
 
+//type Opener interface {
+//	Open(inputPath string) (*image.Image, error)
+//}
+//
+//type Closer interface {
+//	Close(currentImage *image.Image, outputPath string) error
+//}
+
 type Operator interface {
 	Open(inputPath string) (*image.Image, error)
 	NextImage(currentImage *image.Image) (*image.Image, error)

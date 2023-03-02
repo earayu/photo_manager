@@ -1,13 +1,14 @@
-package common
+package mixer
 
 import (
 	"errors"
+	"github.com/earayu/photo_manager/common"
 	"image"
 	"image/color"
 )
 
 type CombinationMixer struct {
-	DefaultOperator
+	common.DefaultOperator
 }
 
 func (m *CombinationMixer) Mix(imagePool []*image.Image) (*image.Image, error) {
@@ -50,5 +51,5 @@ func (m *CombinationMixer) Mix(imagePool []*image.Image) (*image.Image, error) {
 	}
 
 	// Return the new image and nil error to indicate a successful mix
-	return rgbaToImage(rgba), nil
+	return common.RgbaToImage(rgba), nil
 }
