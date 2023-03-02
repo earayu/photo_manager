@@ -57,7 +57,7 @@ func NewGridStitchWorkflow(inputDir, ouputDir string) *GridStitchWorkflow {
 	}
 
 	mixer := &mixer.GridStitchMixer{
-		Grid: config.HeartGrid,
+		Grid: config.HeartGridBig,
 	}
 
 	return &GridStitchWorkflow{
