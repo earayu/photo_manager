@@ -12,11 +12,11 @@ import (
 	"strings"
 )
 
-type StitchWorkflow struct {
+type GridStitchWorkflow struct {
 	workflow.Workflow
 }
 
-func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
+func NewGridStitchWorkflow(inputDir, ouputDir string) *GridStitchWorkflow {
 
 	source := &common.FileSystemSource{
 		InputDir:  inputDir,
@@ -56,12 +56,11 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 		},
 	}
 
-	mixer := &mixer.StitchMixer{
-		PhotoCountInRowSide:    10,
-		PhotoCountInColumnSide: 10,
+	mixer := &mixer.GridStitchMixer{
+		Grid: config.HeartGrid,
 	}
 
-	return &StitchWorkflow{
+	return &GridStitchWorkflow{
 		workflow.Workflow{
 			SourceImagePool: source,
 			OperatorChain:   chain,
@@ -73,7 +72,7 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 func main() {
 	flag.Parse()
 
-	w := NewStitchWorkflow(config.GlobalConfig.InputDir(), config.GlobalConfig.OutputDir())
+	w := NewGridStitchWorkflow(config.GlobalConfig.InputDir(), config.GlobalConfig.OutputDir())
 	w.Run()
 
 }

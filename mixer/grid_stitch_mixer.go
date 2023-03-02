@@ -4,24 +4,28 @@ import (
 	"errors"
 	"github.com/earayu/photo_manager/common"
 	"image"
+	"image/color"
 	"image/draw"
 )
 
-type StitchMixer struct {
+type GridStitchMixer struct {
 	common.DefaultOperator
 
-	PhotoCountInRowSide    int
-	PhotoCountInColumnSide int
+	Grid [][]int
 }
 
-func (m *StitchMixer) Mix(imagePool []*image.Image) (*image.Image, error) {
+func (m *GridStitchMixer) Mix(imagePool []*image.Image) (*image.Image, error) {
 	// Make sure we have at least two images to stitch
 	if len(imagePool) < 2 {
 		return nil, errors.New("need at least two images to stitch")
 	}
 
+	PhotoCountInRowSide := len(m.Grid[0])
+	PhotoCountInColumnSide := len(m.Grid)
+
 	//shuffle the images
-	imagePool = common.ShuffleN(imagePool, m.PhotoCountInRowSide*m.PhotoCountInColumnSide)
+	originImagePool := imagePool
+	imagePool = common.Shuffle(imagePool)
 
 	// Get the size of the first image and calculate the size of the stitched image
 	w := (*imagePool[0]).Bounds().Max.X
@@ -37,18 +41,27 @@ func (m *StitchMixer) Mix(imagePool []*image.Image) (*image.Image, error) {
 	}
 
 	// Create the output image
-	outImg := image.NewRGBA(image.Rect(0, 0, w*m.PhotoCountInRowSide, h*m.PhotoCountInColumnSide))
+	outImg := image.NewRGBA(image.Rect(0, 0, w*PhotoCountInRowSide, h*PhotoCountInColumnSide))
+	backgroundColor := color.RGBA{246, 129, 129, 125}
 
-	for i := 0; i < m.PhotoCountInRowSide; i++ {
-		for j := 0; j < m.PhotoCountInColumnSide; j++ {
+	for i := 0; i < PhotoCountInColumnSide; i++ {
+		for j := 0; j < PhotoCountInRowSide; j++ {
+			x := j * w
+			y := i * h
+			if m.Grid[i][j] == 0 {
+				//draw background color
+				r := image.Rect(x, y, x+w, y+h)
+				draw.Draw(outImg, r, &image.Uniform{backgroundColor}, image.Point{}, draw.Src)
+				continue
+			}
 			//poll out the first image from imagePool
 			img := imagePool[0]
 			imagePool = imagePool[1:]
-
+			if len(imagePool) == 0 {
+				imagePool = common.Shuffle(originImagePool)
+			}
 			// Draw each image onto the output image
 			bounds := (*img).Bounds()
-			x := i * w
-			y := j * h
 			r := image.Rect(x, y, x+bounds.Max.X, y+bounds.Max.Y)
 			draw.Draw(outImg, r, *img, bounds.Min, draw.Src)
 		}
