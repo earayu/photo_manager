@@ -24,6 +24,10 @@ func (g globalConfig) TargetFileName() string {
 	return g.targetFileName
 }
 
+func (g globalConfig) FullNameTargetFileName(fileType string) string {
+	return g.OutputDir() + "/" + g.TargetFileName() + "." + fileType
+}
+
 func (g globalConfig) SourceType() []string {
 	return g.sourceType
 }
