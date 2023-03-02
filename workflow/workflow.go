@@ -17,8 +17,10 @@ func (w *Workflow) Run() {
 		//join w.SourceImagePool.InputDir and fileName
 		sourceFileName := config.GlobalConfig.InputDir() + "/" + fileName
 		processedFileName := config.GlobalConfig.OutputDir() + "/" + fileName
-		w.OperatorChain.Process(sourceFileName, processedFileName)
+		w.OperatorChain.Wg.Add(1)
+		go w.OperatorChain.Process(sourceFileName, processedFileName)
 	}
+	w.OperatorChain.Wg.Wait()
 	resultImage, err := w.Mixer.Mix(w.SourceImagePool.GetProcessedImages())
 	if err != nil {
 		panic(err)

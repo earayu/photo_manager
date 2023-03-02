@@ -42,7 +42,7 @@ func (m *GridStitchMixer) Mix(imagePool []*image.Image) (*image.Image, error) {
 
 	// Create the output image
 	outImg := image.NewRGBA(image.Rect(0, 0, w*PhotoCountInRowSide, h*PhotoCountInColumnSide))
-	backgroundColor := color.RGBA{246, 129, 129, 125}
+	backgroundColor := color.RGBA{246, 129, 129, 60}
 
 	for i := 0; i < PhotoCountInColumnSide; i++ {
 		for j := 0; j < PhotoCountInRowSide; j++ {

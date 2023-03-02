@@ -1,5 +1,7 @@
 package common
 
+import "sync"
+
 type OperatorChain struct {
 	DefaultOperator
 
@@ -7,9 +9,11 @@ type OperatorChain struct {
 
 	//SkipClose default true
 	AutoSave bool
+	Wg       sync.WaitGroup
 }
 
 func (o *OperatorChain) Process(inputPath, outputPath string) {
+	defer o.Wg.Done()
 	image, err := o.Open(inputPath)
 	if err != nil {
 		panic(err)
@@ -33,4 +37,9 @@ func (o *OperatorChain) Process(inputPath, outputPath string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+// wait for all process to finish
+func (o *OperatorChain) Wait() {
+	o.Wg.Wait()
 }
