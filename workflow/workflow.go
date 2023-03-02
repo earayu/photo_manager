@@ -15,7 +15,7 @@ type CombinationWorkflow struct {
 	Mixer           *common.CombinationMixer
 }
 
-// NewCombinationWorkflow creates a new workflow and initializes all the components
+// NewCombinationWorkflow creates a new workflow and initializes all the components.
 func NewCombinationWorkflow(inputDir, ouputDir string) *CombinationWorkflow {
 
 	source := &common.FileSystemSource{
@@ -69,9 +69,9 @@ func (w *CombinationWorkflow) Run() {
 	w.SourceImagePool.Open()
 	for fileName, hasNext := w.SourceImagePool.Next(); hasNext; fileName, hasNext = w.SourceImagePool.Next() {
 		//join w.SourceImagePool.InputDir and fileName
-		w.OperatorChain.InputPath = w.SourceImagePool.InputDir + "/" + fileName
-		w.OperatorChain.OutputPath = w.SourceImagePool.OutputDir + "/" + fileName
-		w.OperatorChain.Process()
+		sourceFileName := w.SourceImagePool.InputDir + "/" + fileName
+		processedFileName := w.SourceImagePool.OutputDir + "/" + fileName
+		w.OperatorChain.Process(sourceFileName, processedFileName)
 	}
 	resultImage, err := w.Mixer.Mix(w.SourceImagePool.ProcessedImages)
 	if err != nil {
@@ -81,7 +81,7 @@ func (w *CombinationWorkflow) Run() {
 }
 
 func main() {
-	flag.StringVar(&inputDir, "input_dir", "~/Documents/GitHub/photo_manager", "The base directory of the project")
+	flag.StringVar(&inputDir, "input_dir", "~/Documents/GitHub/photo_manager/testdata/resizer", "The base directory of the project")
 	flag.StringVar(&outputDir, "output_dir", "", "The base directory of the project")
 	flag.StringVar(&targetFileName, "target_file_name", "target", "The base directory of the project")
 	flag.StringArrayVar(&sourceType, "source_type", []string{"jpg", "jpeg", "png"}, "The base directory of the project")

@@ -3,17 +3,14 @@ package common
 type OperatorChain struct {
 	DefaultOperator
 
-	InputPath  string
-	OutputPath string
-
 	Ops []Operator
 
 	//todo feature: add flag to control whether to save image to disk after each operator
 	//each operator should also have a flag to control whether to save image to disk
 }
 
-func (o *OperatorChain) Process() {
-	image, err := o.Open(o.InputPath)
+func (o *OperatorChain) Process(inputPath, outputPath string) {
+	image, err := o.Open(inputPath)
 	if err != nil {
 		panic(err)
 	}
@@ -29,7 +26,7 @@ func (o *OperatorChain) Process() {
 	if image == nil {
 		return
 	}
-	err = o.Close(image, o.OutputPath)
+	err = o.Close(image, outputPath)
 	if err != nil {
 		panic(err)
 	}
