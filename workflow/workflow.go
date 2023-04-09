@@ -8,7 +8,7 @@ import (
 type Workflow struct {
 	SourceImagePool common.Source
 	OperatorChain   *common.OperatorChain
-	Mixer           common.Mixer
+	Mixer           *common.Mixer
 }
 
 func (w *Workflow) Run() {
@@ -21,7 +21,7 @@ func (w *Workflow) Run() {
 		go w.OperatorChain.Process(sourceFileName, processedFileName)
 	}
 	w.OperatorChain.Wg.Wait()
-	resultImage, err := w.Mixer.Mix(w.SourceImagePool.GetProcessedImages())
+	resultImage, err := w.Mixer.Mix()
 	if err != nil {
 		panic(err)
 	}

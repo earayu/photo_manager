@@ -18,6 +18,11 @@ type GridStitchWorkflow struct {
 
 func NewGridStitchWorkflow(inputDir, ouputDir string) *GridStitchWorkflow {
 
+	creator := mixer.GridStitchMixerCreator{
+		Grid: config.HeartGridBig,
+	}
+	mixer := creator.Create()
+
 	source := &common.FileSystemSource{
 		InputDir:  inputDir,
 		OutputDir: ouputDir,
@@ -30,7 +35,6 @@ func NewGridStitchWorkflow(inputDir, ouputDir string) *GridStitchWorkflow {
 			}
 			return false
 		},
-		ProcessedImages: make([]*image.Image, 0),
 	}
 
 	chain := &common.OperatorChain{
@@ -50,14 +54,10 @@ func NewGridStitchWorkflow(inputDir, ouputDir string) *GridStitchWorkflow {
 			},
 			&common.Acceptor{
 				Accept: func(img *image.Image) {
-					source.ProcessedImages = append(source.ProcessedImages, img)
+					mixer.AddImages(img)
 				},
 			},
 		},
-	}
-
-	mixer := &mixer.GridStitchMixer{
-		Grid: config.HeartGridBig,
 	}
 
 	return &GridStitchWorkflow{

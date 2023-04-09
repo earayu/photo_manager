@@ -1,7 +1,6 @@
 package common
 
 import (
-	"image"
 	"os"
 	"sync/atomic"
 )
@@ -9,7 +8,6 @@ import (
 type Source interface {
 	Open() error
 	Next() (string, bool)
-	GetProcessedImages() []*image.Image
 }
 
 type FileSystemSource struct {
@@ -21,9 +19,6 @@ type FileSystemSource struct {
 
 	//filter out some files based on file name, e.g. filter out all files that end with ".mov" or ".mp4"
 	SourceFilter func(fileName string) bool
-
-	//processed images
-	ProcessedImages []*image.Image
 }
 
 func (f *FileSystemSource) Open() error {
@@ -64,8 +59,4 @@ func (f *FileSystemSource) Next() (string, bool) {
 		return f.Next()
 	}
 	return fileName, f.index.Load() < int32(len(f.Files))
-}
-
-func (f *FileSystemSource) GetProcessedImages() []*image.Image {
-	return f.ProcessedImages
 }

@@ -19,6 +19,9 @@ type CombinationWorkflow struct {
 // NewCombinationWorkflow creates a new workflow and initializes all the components.
 func NewCombinationWorkflow(inputDir, ouputDir string) *CombinationWorkflow {
 
+	creator := mixer.CombinationMixerCreator{}
+	mixer := creator.Create()
+
 	source := &common.FileSystemSource{
 		InputDir:  inputDir,
 		OutputDir: ouputDir,
@@ -31,7 +34,6 @@ func NewCombinationWorkflow(inputDir, ouputDir string) *CombinationWorkflow {
 			}
 			return false
 		},
-		ProcessedImages: make([]*image.Image, 0),
 	}
 
 	chain := &common.OperatorChain{
@@ -51,13 +53,11 @@ func NewCombinationWorkflow(inputDir, ouputDir string) *CombinationWorkflow {
 			},
 			&common.Acceptor{
 				Accept: func(img *image.Image) {
-					source.ProcessedImages = append(source.ProcessedImages, img)
+					mixer.AddImages(img)
 				},
 			},
 		},
 	}
-
-	mixer := &mixer.CombinationMixer{}
 
 	return &CombinationWorkflow{
 		workflow.Workflow{

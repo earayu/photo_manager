@@ -18,6 +18,12 @@ type StitchWorkflow struct {
 
 func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 
+	creator := mixer.StitchMixerCreator{
+		PhotoCountInRowSide:    10,
+		PhotoCountInColumnSide: 10,
+	}
+	mixer := creator.Create()
+
 	source := &common.FileSystemSource{
 		InputDir:  inputDir,
 		OutputDir: ouputDir,
@@ -30,7 +36,6 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 			}
 			return false
 		},
-		ProcessedImages: make([]*image.Image, 0),
 	}
 
 	chain := &common.OperatorChain{
@@ -50,15 +55,10 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 			},
 			&common.Acceptor{
 				Accept: func(img *image.Image) {
-					source.ProcessedImages = append(source.ProcessedImages, img)
+					mixer.AddImages(img)
 				},
 			},
 		},
-	}
-
-	mixer := &mixer.StitchMixer{
-		PhotoCountInRowSide:    10,
-		PhotoCountInColumnSide: 10,
 	}
 
 	return &StitchWorkflow{
