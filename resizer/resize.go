@@ -18,20 +18,3 @@ func (t *ThumbnailResizer) NextImage(currentImage *image.Image) (*image.Image, e
 	outputImage := resize.Thumbnail(t.MaxWidth, t.MaxHeight, (*currentImage), resize.Lanczos3)
 	return &outputImage, nil
 }
-
-func ThumbnailImage(inputPath, outputPath string, maxWidth, maxHeight uint) (error, int, int) {
-	t := ThumbnailResizer{
-		MaxWidth:  uint(maxWidth),
-		MaxHeight: uint(maxHeight),
-	}
-	image, err := t.Open(inputPath)
-	if err != nil {
-		return err, 0, 0
-	}
-	outputImage, err := t.NextImage(image)
-	if err != nil {
-		return err, 0, 0
-	}
-	t.Close(outputImage, outputPath)
-	return nil, (*outputImage).Bounds().Dx(), (*outputImage).Bounds().Dy()
-}

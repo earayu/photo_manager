@@ -40,23 +40,6 @@ func (c *CutterByRatio) NextImage(currentImage *image.Image) (*image.Image, erro
 	return &croppedImage, nil
 }
 
-func CutImageByRatio(inputPath, outputPath string, widthWeight int, heightWeight int) (error, int, int) {
-	c := CutterByRatio{
-		WidthWeight:  widthWeight,
-		HeightWeight: heightWeight,
-	}
-	image, err := c.Open(inputPath)
-	if err != nil {
-		return err, 0, 0
-	}
-	croppedImage, err := c.NextImage(image)
-	if err != nil {
-		return err, 0, 0
-	}
-	c.Close(croppedImage, outputPath)
-	return nil, (*croppedImage).Bounds().Dx(), (*croppedImage).Bounds().Dy()
-}
-
 type CutterBySize struct {
 	common.DefaultOperator
 
@@ -88,22 +71,4 @@ func (c *CutterBySize) NextImage(currentImage *image.Image) (*image.Image, error
 		SubImage(r image.Rectangle) image.Image
 	}).SubImage(image.Rect(startX, startY, startX+outputWidth, startY+outputHeight))
 	return &croppedImage, nil
-}
-
-// cutImage cuts an image to the specified dimensions
-func cutImage(inputPath, outputPath string, targetWidth, targetHeight int) (error, int, int) {
-	c := CutterBySize{
-		targetWidth:  targetWidth,
-		targetHeight: targetHeight,
-	}
-	image, err := c.Open(inputPath)
-	if err != nil {
-		return err, 0, 0
-	}
-	croppedImage, err := c.NextImage(image)
-	if err != nil {
-		return err, 0, 0
-	}
-	c.Close(croppedImage, outputPath)
-	return nil, (*croppedImage).Bounds().Dx(), (*croppedImage).Bounds().Dy()
 }
