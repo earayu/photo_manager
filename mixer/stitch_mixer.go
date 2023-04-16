@@ -24,8 +24,8 @@ func (m *StitchMixerCreator) Create() *operator.Mixer {
 		imagePool = common.ShuffleN(imagePool, m.PhotoCountInRowSide*m.PhotoCountInColumnSide)
 
 		// Get the size of the first image and calculate the size of the stitched image
-		w := imagePool[0].Bounds().Max.X
-		h := imagePool[0].Bounds().Max.Y
+		w := imagePool[0].Bounds().Max.X - imagePool[0].Bounds().Min.X
+		h := imagePool[0].Bounds().Max.Y - imagePool[0].Bounds().Min.Y
 		for _, img := range imagePool[1:] {
 			bounds := img.Bounds()
 			if bounds.Max.X > w {

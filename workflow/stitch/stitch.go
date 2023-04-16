@@ -18,8 +18,8 @@ type StitchWorkflow struct {
 func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 
 	creator := mixer.StitchMixerCreator{
-		PhotoCountInRowSide:    10,
-		PhotoCountInColumnSide: 10,
+		PhotoCountInRowSide:    3,
+		PhotoCountInColumnSide: 3,
 	}
 	mixer := creator.Create()
 
@@ -49,8 +49,8 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 				HeightWeight: 1,
 			},
 			&operator.ThumbnailResizer{
-				MaxWidth:  300,
-				MaxHeight: 300,
+				MaxWidth:  800,
+				MaxHeight: 800,
 			},
 			&common.Acceptor{
 				Accept: func(img image.Image) {

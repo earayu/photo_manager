@@ -20,8 +20,8 @@ func (c *CombinationMixerCreator) Create() *operator.Mixer {
 		}
 
 		// Create a new RGBA image with dimensions equal to the first image in imagePool
-		width := imagePool[0].Bounds().Max.X
-		height := imagePool[0].Bounds().Max.Y
+		width := imagePool[0].Bounds().Max.X - imagePool[0].Bounds().Min.X
+		height := imagePool[0].Bounds().Max.Y - imagePool[0].Bounds().Min.Y
 		rgba := image.NewRGBA(image.Rect(0, 0, width, height))
 
 		// Loop through each pixel in the new image and calculate the average color

@@ -43,23 +43,22 @@ func NewGridStitchWorkflow(inputDir, ouputDir string) *GridStitchWorkflow {
 					return true
 				},
 			},
-			&operator.CutterByRatio{
-				WidthWeight:  1,
-				HeightWeight: 1,
-			},
-			&operator.ThumbnailResizer{
-				MaxWidth:  300,
-				MaxHeight: 300,
-			},
-
-			//&operator.SmartCrop{
-			//	Width:  300,
-			//	Height: 300,
+			//&operator.CutterByRatio{
+			//	WidthWeight:  1,
+			//	HeightWeight: 1,
 			//},
 			//&operator.ThumbnailResizer{
 			//	MaxWidth:  300,
 			//	MaxHeight: 300,
 			//},
+			&operator.SmartCrop{
+				Width:  300,
+				Height: 300,
+			},
+			&operator.ThumbnailResizer{
+				MaxWidth:  300,
+				MaxHeight: 300,
+			},
 
 			&common.Acceptor{
 				Accept: func(img image.Image) {
