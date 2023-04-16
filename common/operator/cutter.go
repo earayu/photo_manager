@@ -11,12 +11,12 @@ type CutterByRatio struct {
 	HeightWeight int
 }
 
-func (c *CutterByRatio) NextImage(currentImage *image.Image) (*image.Image, error) {
+func (c *CutterByRatio) NextImage(currentImage image.Image) (image.Image, error) {
 	targetRatio := float64(c.WidthWeight) / float64(c.HeightWeight)
 
 	// Get input image dimensions
-	inputWidth := (*currentImage).Bounds().Dx()
-	inputHeight := (*currentImage).Bounds().Dy()
+	inputWidth := currentImage.Bounds().Dx()
+	inputHeight := currentImage.Bounds().Dy()
 
 	// Calculate output image dimensions
 	inputRatio := float64(inputWidth) / float64(inputHeight)
@@ -33,10 +33,10 @@ func (c *CutterByRatio) NextImage(currentImage *image.Image) (*image.Image, erro
 	startY := (inputHeight - outputHeight) / 2
 
 	// Create the cropped image
-	croppedImage := (*currentImage).(interface {
+	croppedImage := currentImage.(interface {
 		SubImage(r image.Rectangle) image.Image
 	}).SubImage(image.Rect(startX, startY, startX+outputWidth, startY+outputHeight))
-	return &croppedImage, nil
+	return croppedImage, nil
 }
 
 type CutterBySize struct {
@@ -46,10 +46,10 @@ type CutterBySize struct {
 	targetHeight int
 }
 
-func (c *CutterBySize) NextImage(currentImage *image.Image) (*image.Image, error) {
+func (c *CutterBySize) NextImage(currentImage image.Image) (image.Image, error) {
 	// Get input image dimensions
-	inputWidth := (*currentImage).Bounds().Dx()
-	inputHeight := (*currentImage).Bounds().Dy()
+	inputWidth := currentImage.Bounds().Dx()
+	inputHeight := currentImage.Bounds().Dy()
 
 	// Calculate output image dimensions
 	outputWidth := c.targetWidth
@@ -66,8 +66,8 @@ func (c *CutterBySize) NextImage(currentImage *image.Image) (*image.Image, error
 	startY := (inputHeight - outputHeight) / 2
 
 	// Create the cropped image
-	croppedImage := (*currentImage).(interface {
+	croppedImage := currentImage.(interface {
 		SubImage(r image.Rectangle) image.Image
 	}).SubImage(image.Rect(startX, startY, startX+outputWidth, startY+outputHeight))
-	return &croppedImage, nil
+	return croppedImage, nil
 }

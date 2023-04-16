@@ -7,10 +7,10 @@ import (
 
 type Acceptor struct {
 	operator.DefaultOperator
-	Accept func(currentImage *image.Image)
+	Accept func(currentImage image.Image)
 }
 
-func (a *Acceptor) NextImage(currentImage *image.Image) (*image.Image, error) {
+func (a *Acceptor) NextImage(currentImage image.Image) (image.Image, error) {
 	a.Accept(currentImage)
 	return currentImage, nil
 }

@@ -39,7 +39,7 @@ func NewGridStitchWorkflow(inputDir, ouputDir string) *GridStitchWorkflow {
 	chain := &operator.OperatorChain{
 		Ops: []operator.Operator{
 			&operator.Filter{
-				Filter: func(img *image.Image) bool {
+				Filter: func(img image.Image) bool {
 					return true
 				},
 			},
@@ -51,8 +51,18 @@ func NewGridStitchWorkflow(inputDir, ouputDir string) *GridStitchWorkflow {
 				MaxWidth:  300,
 				MaxHeight: 300,
 			},
+
+			//&operator.SmartCrop{
+			//	Width:  300,
+			//	Height: 300,
+			//},
+			//&operator.ThumbnailResizer{
+			//	MaxWidth:  300,
+			//	MaxHeight: 300,
+			//},
+
 			&common.Acceptor{
-				Accept: func(img *image.Image) {
+				Accept: func(img image.Image) {
 					mixer.AddImages(img)
 				},
 			},

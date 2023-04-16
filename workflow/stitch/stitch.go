@@ -40,7 +40,7 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 	chain := &operator.OperatorChain{
 		Ops: []operator.Operator{
 			&operator.Filter{
-				Filter: func(img *image.Image) bool {
+				Filter: func(img image.Image) bool {
 					return true
 				},
 			},
@@ -53,7 +53,7 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 				MaxHeight: 300,
 			},
 			&common.Acceptor{
-				Accept: func(img *image.Image) {
+				Accept: func(img image.Image) {
 					mixer.AddImages(img)
 				},
 			},

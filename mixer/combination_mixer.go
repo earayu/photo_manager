@@ -13,15 +13,15 @@ type CombinationMixerCreator struct {
 
 // create
 func (c *CombinationMixerCreator) Create() *operator.Mixer {
-	return operator.CreateMixer(func(imagePool []*image.Image) (*image.Image, error) {
+	return operator.CreateMixer(func(imagePool []image.Image) (image.Image, error) {
 		// Check if imagePool is not empty
 		if len(imagePool) == 0 {
 			return nil, errors.New("imagePool is empty")
 		}
 
 		// Create a new RGBA image with dimensions equal to the first image in imagePool
-		width := (*imagePool[0]).Bounds().Max.X
-		height := (*imagePool[0]).Bounds().Max.Y
+		width := imagePool[0].Bounds().Max.X
+		height := imagePool[0].Bounds().Max.Y
 		rgba := image.NewRGBA(image.Rect(0, 0, width, height))
 
 		// Loop through each pixel in the new image and calculate the average color
@@ -30,7 +30,7 @@ func (c *CombinationMixerCreator) Create() *operator.Mixer {
 				var r, g, b, a uint32
 				for _, img := range imagePool {
 					// Retrieve the color of the corresponding pixel in the current image
-					c := (*img).At(x, y)
+					c := img.At(x, y)
 					cr, cg, cb, ca := c.RGBA()
 
 					// Accumulate the colors

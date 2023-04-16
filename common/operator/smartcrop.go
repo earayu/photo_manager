@@ -13,13 +13,15 @@ type SmartCrop struct {
 	Height int
 }
 
-func (s *SmartCrop) NextImage(currentImage *image.Image) (*image.Image, error) {
+func (s *SmartCrop) NextImage(currentImage image.Image) (image.Image, error) {
 	analyzer := smartcrop.NewAnalyzer(nfnt.NewDefaultResizer())
-	topCrop, _ := analyzer.FindBestCrop(*currentImage, 250, 250)
-
+	topCrop, err := analyzer.FindBestCrop(currentImage, s.Width, s.Height)
+	if err != nil {
+		panic(err)
+	}
 	type SubImager interface {
 		SubImage(r image.Rectangle) image.Image
 	}
-	croppedimg := (*currentImage).(SubImager).SubImage(topCrop)
-	return &croppedimg, nil
+	croppedimg := currentImage.(SubImager).SubImage(topCrop)
+	return croppedimg, nil
 }

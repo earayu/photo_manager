@@ -7,15 +7,15 @@ import (
 )
 
 type Opener interface {
-	Open(inputPath string) (*image.Image, error)
+	Open(inputPath string) (image.Image, error)
 }
 
 type Closer interface {
-	Close(currentImage *image.Image, outputPath string) error
+	Close(currentImage image.Image, outputPath string) error
 }
 
 type Operator interface {
-	NextImage(currentImage *image.Image) (*image.Image, error)
+	NextImage(currentImage image.Image) (image.Image, error)
 }
 
 type DefaultOpener struct {
@@ -29,7 +29,7 @@ type DefaultOperator struct {
 	DefaultCloser
 }
 
-func (d *DefaultOpener) Open(inputPath string) (*image.Image, error) {
+func (d *DefaultOpener) Open(inputPath string) (image.Image, error) {
 	// Open input file
 	inputFile, err := os.Open(inputPath)
 	if err != nil {
@@ -42,10 +42,10 @@ func (d *DefaultOpener) Open(inputPath string) (*image.Image, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &inputImage, nil
+	return inputImage, nil
 }
 
-func (d *DefaultCloser) Close(currentImage *image.Image, outputPath string) error {
+func (d *DefaultCloser) Close(currentImage image.Image, outputPath string) error {
 	// Create output file
 	outputFile, err := os.Create(outputPath)
 	if err != nil {
@@ -54,13 +54,13 @@ func (d *DefaultCloser) Close(currentImage *image.Image, outputPath string) erro
 	defer outputFile.Close()
 
 	// Encode output image
-	err = jpeg.Encode(outputFile, *currentImage, &jpeg.Options{Quality: 80})
+	err = jpeg.Encode(outputFile, currentImage, &jpeg.Options{Quality: 80})
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (d *DefaultOperator) NextImage(currentImage *image.Image) (*image.Image, error) {
+func (d *DefaultOperator) NextImage(currentImage image.Image) (image.Image, error) {
 	panic("implement me")
 }

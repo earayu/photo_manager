@@ -14,7 +14,7 @@ type StitchMixerCreator struct {
 }
 
 func (m *StitchMixerCreator) Create() *operator.Mixer {
-	return operator.CreateMixer(func(imagePool []*image.Image) (*image.Image, error) {
+	return operator.CreateMixer(func(imagePool []image.Image) (image.Image, error) {
 		// Make sure we have at least two images to stitch
 		if len(imagePool) < 2 {
 			return nil, errors.New("need at least two images to stitch")
@@ -24,10 +24,10 @@ func (m *StitchMixerCreator) Create() *operator.Mixer {
 		imagePool = common.ShuffleN(imagePool, m.PhotoCountInRowSide*m.PhotoCountInColumnSide)
 
 		// Get the size of the first image and calculate the size of the stitched image
-		w := (*imagePool[0]).Bounds().Max.X
-		h := (*imagePool[0]).Bounds().Max.Y
+		w := imagePool[0].Bounds().Max.X
+		h := imagePool[0].Bounds().Max.Y
 		for _, img := range imagePool[1:] {
-			bounds := (*img).Bounds()
+			bounds := img.Bounds()
 			if bounds.Max.X > w {
 				w = bounds.Max.X
 			}
@@ -46,11 +46,11 @@ func (m *StitchMixerCreator) Create() *operator.Mixer {
 				imagePool = imagePool[1:]
 
 				// Draw each image onto the output image
-				bounds := (*img).Bounds()
+				bounds := img.Bounds()
 				x := i * w
 				y := j * h
 				r := image.Rect(x, y, x+bounds.Max.X, y+bounds.Max.Y)
-				draw.Draw(outImg, r, *img, bounds.Min, draw.Src)
+				draw.Draw(outImg, r, img, bounds.Min, draw.Src)
 			}
 		}
 
