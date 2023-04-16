@@ -2,10 +2,9 @@ package main
 
 import (
 	"github.com/earayu/photo_manager/common"
+	"github.com/earayu/photo_manager/common/operator"
 	"github.com/earayu/photo_manager/config"
-	"github.com/earayu/photo_manager/cutter"
 	"github.com/earayu/photo_manager/mixer"
-	"github.com/earayu/photo_manager/resizer"
 	"github.com/earayu/photo_manager/workflow"
 	flag "github.com/spf13/pflag"
 	"image"
@@ -38,18 +37,18 @@ func NewStitchWorkflow(inputDir, ouputDir string) *StitchWorkflow {
 		},
 	}
 
-	chain := &common.OperatorChain{
-		Ops: []common.Operator{
-			&common.Filter{
+	chain := &operator.OperatorChain{
+		Ops: []operator.Operator{
+			&operator.Filter{
 				Filter: func(img *image.Image) bool {
 					return true
 				},
 			},
-			&cutter.CutterByRatio{
+			&operator.CutterByRatio{
 				WidthWeight:  1,
 				HeightWeight: 1,
 			},
-			&resizer.ThumbnailResizer{
+			&operator.ThumbnailResizer{
 				MaxWidth:  300,
 				MaxHeight: 300,
 			},

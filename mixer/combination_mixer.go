@@ -3,6 +3,7 @@ package mixer
 import (
 	"errors"
 	"github.com/earayu/photo_manager/common"
+	"github.com/earayu/photo_manager/common/operator"
 	"image"
 	"image/color"
 )
@@ -11,8 +12,8 @@ type CombinationMixerCreator struct {
 }
 
 // create
-func (c *CombinationMixerCreator) Create() *common.Mixer {
-	return common.CreateMixer(func(imagePool []*image.Image) (*image.Image, error) {
+func (c *CombinationMixerCreator) Create() *operator.Mixer {
+	return operator.CreateMixer(func(imagePool []*image.Image) (*image.Image, error) {
 		// Check if imagePool is not empty
 		if len(imagePool) == 0 {
 			return nil, errors.New("imagePool is empty")

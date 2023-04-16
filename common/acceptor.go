@@ -1,9 +1,12 @@
 package common
 
-import "image"
+import (
+	"github.com/earayu/photo_manager/common/operator"
+	"image"
+)
 
 type Acceptor struct {
-	DefaultOperator
+	operator.DefaultOperator
 	Accept func(currentImage *image.Image)
 }
 

@@ -1,6 +1,8 @@
-package common
+package operator
 
-import "image"
+import (
+	"image"
+)
 
 type Filter struct {
 	DefaultOperator

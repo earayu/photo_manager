@@ -1,13 +1,12 @@
-package resizer
+package operator
 
 import (
-	"github.com/earayu/photo_manager/common"
 	"github.com/nfnt/resize"
 	"image"
 )
 
 type ThumbnailResizer struct {
-	common.DefaultOperator
+	DefaultOperator
 
 	MaxWidth  uint
 	MaxHeight uint

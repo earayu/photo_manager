@@ -1,12 +1,11 @@
-package cutter
+package operator
 
 import (
-	"github.com/earayu/photo_manager/common"
 	"image"
 )
 
 type CutterByRatio struct {
-	common.DefaultOperator
+	DefaultOperator
 
 	WidthWeight  int
 	HeightWeight int
@@ -41,7 +40,7 @@ func (c *CutterByRatio) NextImage(currentImage *image.Image) (*image.Image, erro
 }
 
 type CutterBySize struct {
-	common.DefaultOperator
+	DefaultOperator
 
 	targetWidth  int
 	targetHeight int

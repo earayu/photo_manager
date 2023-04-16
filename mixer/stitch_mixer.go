@@ -3,6 +3,7 @@ package mixer
 import (
 	"errors"
 	"github.com/earayu/photo_manager/common"
+	"github.com/earayu/photo_manager/common/operator"
 	"image"
 	"image/draw"
 )
@@ -12,8 +13,8 @@ type StitchMixerCreator struct {
 	PhotoCountInColumnSide int
 }
 
-func (m *StitchMixerCreator) Create() *common.Mixer {
-	return common.CreateMixer(func(imagePool []*image.Image) (*image.Image, error) {
+func (m *StitchMixerCreator) Create() *operator.Mixer {
+	return operator.CreateMixer(func(imagePool []*image.Image) (*image.Image, error) {
 		// Make sure we have at least two images to stitch
 		if len(imagePool) < 2 {
 			return nil, errors.New("need at least two images to stitch")

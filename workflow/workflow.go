@@ -2,13 +2,14 @@ package workflow
 
 import (
 	"github.com/earayu/photo_manager/common"
+	"github.com/earayu/photo_manager/common/operator"
 	"github.com/earayu/photo_manager/config"
 )
 
 type Workflow struct {
 	SourceImagePool common.Source
-	OperatorChain   *common.OperatorChain
-	Mixer           *common.Mixer
+	OperatorChain   *operator.OperatorChain
+	Mixer           *operator.Mixer
 }
 
 func (w *Workflow) Run() {

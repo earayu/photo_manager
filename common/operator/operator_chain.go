@@ -1,6 +1,8 @@
-package common
+package operator
 
-import "sync"
+import (
+	"sync"
+)
 
 type OperatorChain struct {
 	DefaultOperator
